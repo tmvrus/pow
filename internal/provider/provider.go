@@ -39,7 +39,7 @@ func (p *Provider) Get(ctx context.Context) (string, error) {
 		return "", fmt.Errorf("parse html response: %w", err)
 	}
 
-	// I now, it looks ugly, but they do not provide any API.
+	// I know, it looks ugly, but they do not provide any API.
 	for n := range node.Descendants() {
 		if n.Type == html.TextNode &&
 			n.Parent != nil &&
