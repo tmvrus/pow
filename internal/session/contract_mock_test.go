@@ -16,41 +16,41 @@ import (
 	gomock "go.uber.org/mock/gomock"
 )
 
-// MockhashCashVerifier is a mock of hashCashVerifier interface.
-type MockhashCashVerifier struct {
+// MocksolutionVerifier is a mock of solutionVerifier interface.
+type MocksolutionVerifier struct {
 	ctrl     *gomock.Controller
-	recorder *MockhashCashVerifierMockRecorder
+	recorder *MocksolutionVerifierMockRecorder
 }
 
-// MockhashCashVerifierMockRecorder is the mock recorder for MockhashCashVerifier.
-type MockhashCashVerifierMockRecorder struct {
-	mock *MockhashCashVerifier
+// MocksolutionVerifierMockRecorder is the mock recorder for MocksolutionVerifier.
+type MocksolutionVerifierMockRecorder struct {
+	mock *MocksolutionVerifier
 }
 
-// NewMockhashCashVerifier creates a new mock instance.
-func NewMockhashCashVerifier(ctrl *gomock.Controller) *MockhashCashVerifier {
-	mock := &MockhashCashVerifier{ctrl: ctrl}
-	mock.recorder = &MockhashCashVerifierMockRecorder{mock}
+// NewMocksolutionVerifier creates a new mock instance.
+func NewMocksolutionVerifier(ctrl *gomock.Controller) *MocksolutionVerifier {
+	mock := &MocksolutionVerifier{ctrl: ctrl}
+	mock.recorder = &MocksolutionVerifierMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockhashCashVerifier) EXPECT() *MockhashCashVerifierMockRecorder {
+func (m *MocksolutionVerifier) EXPECT() *MocksolutionVerifierMockRecorder {
 	return m.recorder
 }
 
 // Verify mocks base method.
-func (m *MockhashCashVerifier) Verify(ctx context.Context, zeros int, alg, secret, verifiable string) error {
+func (m *MocksolutionVerifier) Verify(ctx context.Context, hashAlg, resource, solution string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Verify", ctx, zeros, alg, secret, verifiable)
+	ret := m.ctrl.Call(m, "Verify", ctx, hashAlg, resource, solution)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Verify indicates an expected call of Verify.
-func (mr *MockhashCashVerifierMockRecorder) Verify(ctx, zeros, alg, secret, verifiable any) *gomock.Call {
+func (mr *MocksolutionVerifierMockRecorder) Verify(ctx, hashAlg, resource, solution any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Verify", reflect.TypeOf((*MockhashCashVerifier)(nil).Verify), ctx, zeros, alg, secret, verifiable)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Verify", reflect.TypeOf((*MocksolutionVerifier)(nil).Verify), ctx, hashAlg, resource, solution)
 }
 
 // MockwordProvider is a mock of wordProvider interface.

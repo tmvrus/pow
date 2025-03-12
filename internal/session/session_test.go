@@ -17,7 +17,7 @@ func TestSession_HappyPath(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	t.Cleanup(ctrl.Finish)
 	providerMock := NewMockwordProvider(ctrl)
-	verifierMock := NewMockhashCashVerifier(ctrl)
+	verifierMock := NewMocksolutionVerifier(ctrl)
 
 	session := StartNewSession(providerMock, verifierMock)
 
@@ -28,7 +28,7 @@ func TestSession_HappyPath(t *testing.T) {
 
 	verifierMock.
 		EXPECT().
-		Verify(ctx, 5, "sha256", session.verifierSecret, "SOLVED").
+		Verify(ctx, "sha256", session.verifierResource, "SOLVED").
 		Return(nil)
 	providerMock.
 		EXPECT().

@@ -19,7 +19,6 @@ func NewProvider(host string) *Provider {
 }
 
 func (p *Provider) Get(ctx context.Context) (string, error) {
-
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, p.host, nil)
 	if err != nil {
 		return "", fmt.Errorf("create http request: %w", err)

@@ -18,15 +18,15 @@ type Session struct {
 	expectedState int
 	provider      wordProvider
 
-	verifier       hashCashVerifier
-	verifierSecret string
+	verifier         solutionVerifier
+	verifierResource string
 }
 
-func StartNewSession(wp wordProvider, vr hashCashVerifier) *Session {
+func StartNewSession(wp wordProvider, sv solutionVerifier) *Session {
 	s := &Session{
 		expectedState: api.InitialRequest,
 		provider:      wp,
-		verifier:      vr,
+		verifier:      sv,
 	}
 
 	return s
@@ -48,7 +48,7 @@ func (s *Session) Handle(ctx context.Context, req *api.DTO) *api.DTO {
 
 	switch req.State {
 	case api.InitialRequest:
-		return s.handleInitialRequest(ctx)
+		return s.handleInitialRequest()
 	case api.SolveRequest:
 		return s.handleSolveRequest(ctx, req)
 	default:
@@ -59,7 +59,7 @@ func (s *Session) Handle(ctx context.Context, req *api.DTO) *api.DTO {
 }
 
 func (s *Session) handleSolveRequest(ctx context.Context, req *api.DTO) *api.DTO {
-	err := s.verifier.Verify(ctx, defaultVerifierComplexity, defaultVerifierHash, s.verifierSecret, req.Payload)
+	err := s.verifier.Verify(ctx, defaultVerifierHash, s.verifierResource, req.Payload)
 	if err != nil {
 		r := api.NewDTO(api.ErrorResponse)
 		r.Payload = fmt.Sprintf("verification failed: %s", err.Error())
@@ -78,11 +78,11 @@ func (s *Session) handleSolveRequest(ctx context.Context, req *api.DTO) *api.DTO
 	return r
 }
 
-func (s *Session) handleInitialRequest(ctx context.Context) *api.DTO {
-	s.verifierSecret = uuid.NewString()
+func (s *Session) handleInitialRequest() *api.DTO {
+	s.verifierResource = uuid.NewString()
 	s.expectedState = api.SolveRequest
 
 	r := api.NewDTO(api.ChallengeResponse)
-	r.Payload = fmt.Sprintf("%s:%d:%s", defaultVerifierHash, defaultVerifierComplexity, s.verifierSecret)
+	r.Payload = fmt.Sprintf("%s:%d:%s", defaultVerifierHash, defaultVerifierComplexity, s.verifierResource)
 	return r
 }

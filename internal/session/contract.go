@@ -3,8 +3,8 @@ package session
 
 import "context"
 
-type hashCashVerifier interface {
-	Verify(ctx context.Context, zeros int, alg, secret, verifiable string) error
+type solutionVerifier interface {
+	Verify(ctx context.Context, hashAlg, resource, solution string) error
 }
 
 type wordProvider interface {
