@@ -19,7 +19,7 @@ func TestSession_HappyPath(t *testing.T) {
 	providerMock := NewMockwordProvider(ctrl)
 	verifierMock := NewMocksolutionVerifier(ctrl)
 
-	session := StartNewSession(providerMock, verifierMock)
+	session := newSession(providerMock, verifierMock)
 
 	request := api.NewDTO(api.InitialRequest)
 	response := session.Handle(ctx, request)

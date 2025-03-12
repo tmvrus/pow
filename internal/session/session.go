@@ -14,7 +14,7 @@ const (
 	defaultVerifierHash       = "sha256"
 )
 
-type Session struct {
+type session struct {
 	expectedState int
 	provider      wordProvider
 
@@ -22,8 +22,8 @@ type Session struct {
 	verifierResource string
 }
 
-func StartNewSession(wp wordProvider, sv solutionVerifier) *Session {
-	s := &Session{
+func newSession(wp wordProvider, sv solutionVerifier) *session {
+	s := &session{
 		expectedState: api.InitialRequest,
 		provider:      wp,
 		verifier:      sv,
@@ -33,7 +33,7 @@ func StartNewSession(wp wordProvider, sv solutionVerifier) *Session {
 }
 
 // Handle entry point for each request.
-func (s *Session) Handle(ctx context.Context, req *api.DTO) *api.DTO {
+func (s *session) Handle(ctx context.Context, req *api.DTO) *api.DTO {
 	if err := req.Valid(); err != nil {
 		res := api.NewDTO(api.ErrorResponse)
 		res.Payload = err.Error()
@@ -58,7 +58,7 @@ func (s *Session) Handle(ctx context.Context, req *api.DTO) *api.DTO {
 	}
 }
 
-func (s *Session) handleSolveRequest(ctx context.Context, req *api.DTO) *api.DTO {
+func (s *session) handleSolveRequest(ctx context.Context, req *api.DTO) *api.DTO {
 	err := s.verifier.Verify(ctx, defaultVerifierHash, s.verifierResource, req.Payload)
 	if err != nil {
 		r := api.NewDTO(api.ErrorResponse)
@@ -78,7 +78,7 @@ func (s *Session) handleSolveRequest(ctx context.Context, req *api.DTO) *api.DTO
 	return r
 }
 
-func (s *Session) handleInitialRequest() *api.DTO {
+func (s *session) handleInitialRequest() *api.DTO {
 	s.verifierResource = uuid.NewString()
 	s.expectedState = api.SolveRequest
 
