@@ -6,6 +6,8 @@ github.com/PoW-HC/hashcash v0.0.1 h1:uzRtrTpLkl9kEmS5PnOcWIr8kCai32qaw/YLNqOnPYo
 github.com/PoW-HC/hashcash v0.0.1/go.mod h1:plYPNaLHmEE+r8nty+L8+Cn2/wWrRXgqOSkrGiF2ZAo=
 github.com/abice/go-enum v0.4.0/go.mod h1:KV6EE8ZkAwoDSoShP5u/LZ0j5zf7N13bc9QeSGxrM7o=
 github.com/bradleyjkemp/cupaloy v2.3.0+incompatible/go.mod h1:Au1Xw1sgaJ5iSFktEhYsS0dbQiS1B0/XMXl+42y9Ilk=
+github.com/caarlos0/env/v11 v11.3.1 h1:cArPWC15hWmEt+gWk7YBi7lEXTXCvpaSdCiZE2X5mCA=
+github.com/caarlos0/env/v11 v11.3.1/go.mod h1:qupehSf/Y0TUTsxKywqRt/vJjN5nz6vauiYEUUr8P4U=
 github.com/cpuguy83/go-md2man/v2 v2.0.1/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

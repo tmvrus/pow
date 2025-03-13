@@ -10,6 +10,7 @@ require (
 
 require (
 	github.com/PoW-HC/hashcash v0.0.1 // indirect
+	github.com/caarlos0/env/v11 v11.3.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.12 // indirect
 	github.com/minio/sha256-simd v1.0.0 // indirect
