@@ -3,15 +3,18 @@ package config
 import "time"
 
 type ClientConfig struct {
-	Address        string
-	OpTimeout      time.Duration
-	MaxMessageSize int
+	ServerAddress    string        `env:"SERVER_ADDRESS"`
+	OpTimeout        time.Duration `env:"OPERATION_TIMEOUT"`
+	MaxMessageSize   int           `env:"MAX_MESSAGE_SIZE"`
+	MaxPOWIterations int64         `env:"MAX_ITERATIONS"`
 }
 
 func NewClientConfigWithDefaults() *ClientConfig {
+	//nolint:mnd
 	return &ClientConfig{
-		Address:        "127.0.0.1:22222",
-		OpTimeout:      time.Minute,
-		MaxMessageSize: 1024,
+		ServerAddress:    "127.0.0.1:22222",
+		OpTimeout:        time.Minute,
+		MaxMessageSize:   1024,
+		MaxPOWIterations: 1 << 30,
 	}
 }

@@ -3,16 +3,16 @@ package config
 import "time"
 
 type ServerConfig struct {
-	Address        string
-	ProviderHost   string
-	MaxConnections int
-	MaxMessageSize int
-	OpTimeout      time.Duration
+	ListenAddress  string        `env:"LISTEN_ADDRESS"`
+	ProviderHost   string        `env:"PROVIDER_HOST"`
+	MaxConnections int           `env:"MAX_CONNECTIONS"`
+	MaxMessageSize int           `env:"MAX_MESSAGE_SIZE"`
+	OpTimeout      time.Duration `env:"OPERATION_TIMEOUT"`
 }
 
 func NewServerConfigWithDefaults() *ServerConfig {
 	cfg := &ServerConfig{}
-	cfg.Address = "127.0.0.1:22222"
+	cfg.ListenAddress = ":22222"
 	cfg.MaxConnections = 20
 	cfg.OpTimeout = time.Minute
 	cfg.MaxMessageSize = 1024
