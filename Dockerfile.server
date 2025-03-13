@@ -1,0 +1,19 @@
+FROM golang:1.24 as builder
+
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+
+WORKDIR /app
+
+COPY cmd ./cmd
+COPY internal ./internal
+COPY pkg ./pkg
+COPY go.mod go.sum ./
+
+RUN go build ./cmd/server
+
+FROM alpine:latest
+
+COPY --from=builder /app/server /server
+
+CMD ["/server"]
