@@ -24,6 +24,8 @@ func (p *Provider) Get(ctx context.Context) (string, error) {
 		return "", fmt.Errorf("create http request: %w", err)
 	}
 
+	req.Header.Add("User-Agent", "Need it to avoid 503")
+
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("do http request: %w", err)
