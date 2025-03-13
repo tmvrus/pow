@@ -31,6 +31,8 @@ func (p *Provider) Get(ctx context.Context) (string, error) {
 		return "", fmt.Errorf("do http request: %w", err)
 	}
 
+	defer res.Body.Close()
+
 	if res.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("unexpected status: %d", res.StatusCode)
 	}
@@ -46,7 +48,6 @@ func (p *Provider) Get(ctx context.Context) (string, error) {
 			n.Parent != nil &&
 			n.Parent.Type == html.ElementNode &&
 			n.Parent.Data == "a" {
-
 			return n.Data, nil
 		}
 	}

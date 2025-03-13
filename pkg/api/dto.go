@@ -51,8 +51,9 @@ func NewChallengeResponse(bits int32, hashAlg, resource string) *DTO {
 }
 
 func ParseChallengePayload(payload string) (int32, string, string, error) {
+	const validSize = 3
 	parts := strings.Split(payload, ":")
-	if len(parts) != 3 {
+	if len(parts) != validSize {
 		return 0, "", "", fmt.Errorf("invalid format: %q", payload)
 	}
 

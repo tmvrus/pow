@@ -12,14 +12,13 @@ import (
 func TestProvider_HappyPath(t *testing.T) {
 	t.Parallel()
 
-	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, _ *http.Request) {
 		_, _ = writer.Write(response)
 	}))
 
 	res, err := NewProvider(server.URL).Get(context.Background())
 	require.NoError(t, err)
 	require.Equal(t, "I couldn't find any library that can even do that", res)
-
 }
 
 var response = []byte(`<!DOCTYPE HTML>
