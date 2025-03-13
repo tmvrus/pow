@@ -38,8 +38,9 @@ func (v *Verifier) Verify(_ context.Context, hashAlg, resource, solution string)
 }
 
 func parseSolution(s string) (*pow.Hashcach, error) {
+	const validSolutionParts = 7
 	parts := strings.Split(s, ":")
-	if len(parts) != 7 {
+	if len(parts) != validSolutionParts {
 		return nil, fmt.Errorf("invalid solution parts count: %d", len(parts))
 	}
 	version, err := strconv.ParseInt(parts[0], 10, 32)

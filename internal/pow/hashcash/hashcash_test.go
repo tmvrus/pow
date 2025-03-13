@@ -37,3 +37,17 @@ func TestVerifier_HappyPath(t *testing.T) {
 	fmt.Println(hc.String())
 	require.NoError(t, err)
 }
+
+func Test_SolverVerifier(t *testing.T) {
+	t.Parallel()
+
+	bits := int32(3)
+	alg := "sha256"
+	resource := "resource"
+
+	solution, err := NewSolver(1<<30).Solve(context.Background(), bits, alg, resource)
+	require.NoError(t, err)
+
+	err = NewVerifier().Verify(context.Background(), alg, resource, solution)
+	require.NoError(t, err)
+}
