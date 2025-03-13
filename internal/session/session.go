@@ -81,8 +81,5 @@ func (s *session) handleSolveRequest(ctx context.Context, req *api.DTO) *api.DTO
 func (s *session) handleInitialRequest() *api.DTO {
 	s.verifierResource = uuid.NewString()
 	s.expectedState = api.SolveRequest
-
-	r := api.NewDTO(api.ChallengeResponse)
-	r.Payload = fmt.Sprintf("%s:%d:%s", defaultVerifierHash, defaultVerifierComplexity, s.verifierResource)
-	return r
+	return api.NewChallengeResponse(defaultVerifierComplexity, defaultVerifierHash, s.verifierResource)
 }
