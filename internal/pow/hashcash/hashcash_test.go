@@ -2,7 +2,6 @@ package hashcash
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/PoW-HC/hashcash/pkg/hash"
@@ -34,7 +33,6 @@ func TestVerifier_HappyPath(t *testing.T) {
 	require.NoError(t, err)
 
 	err = NewVerifier().Verify(ctx, "sha256", "resource", hc.String())
-	fmt.Println(hc.String())
 	require.NoError(t, err)
 }
 
