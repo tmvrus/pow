@@ -132,7 +132,7 @@ func (h *handler) send(ctx context.Context, r *api.DTO) error {
 	go func() {
 		_, err = h.con.Write(data)
 		if err != nil {
-			errCh <- fmt.Errorf("wite: %w", err)
+			errCh <- fmt.Errorf("write: %w", err)
 		} else {
 			close(errCh)
 		}
