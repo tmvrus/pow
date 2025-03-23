@@ -7,7 +7,7 @@ import (
 )
 
 type solver interface {
-	Solve(ctx context.Context, bits int32, hashAlg string, resource string) (string, error)
+	Solve(ctx context.Context, bits int32, hashAlg, resource string) (string, error)
 }
 
 type connectionSocket interface {
