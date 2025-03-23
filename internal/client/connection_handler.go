@@ -94,8 +94,9 @@ func (h *handler) receive(ctx context.Context) (*api.DTO, error) {
 		data, err := bufio.NewReaderSize(h.con, h.cfg.MaxMessageSize).ReadSlice(api.EndFlag)
 		if err != nil {
 			errCh <- fmt.Errorf("receive response: %w", err)
+		} else {
+			dataCh <- data
 		}
-		dataCh <- data
 	}()
 
 	var data []byte
