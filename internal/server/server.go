@@ -117,15 +117,14 @@ func (s Server) acceptLoop(ctx context.Context, l net.Listener) error {
 func (s Server) handleConnection(ctx context.Context, conn connectionSocket, cfg handlerConfig, remoteIP string) {
 	defer func() {
 		s.close(conn)
+		<-s.connectionLimiter
+		s.currentConnections.Done()
+		s.ipLimiter.release(remoteIP)
 	}()
 
 	start := time.Now()
 
 	newHandler(s.log, s.sessionFactory.NewSessionHandler(), cfg, conn).run(ctx)
-
-	<-s.connectionLimiter
-	s.currentConnections.Done()
-	s.ipLimiter.release(remoteIP)
 
 	s.log.Debug("session finished", "src", conn.RemoteAddr().String(), "duration", time.Since(start).String())
 }
