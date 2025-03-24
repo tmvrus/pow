@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"log/slog"
 	"net"
+	"strings"
 	"sync"
 	"time"
 
@@ -19,6 +21,8 @@ type Server struct {
 	sessionFactory     sessionFactory
 	connectionLimiter  chan struct{}
 	currentConnections *sync.WaitGroup
+	ipLimiter          *bucketLimiter
+	handlerConfig      handlerConfig
 }
 
 func New(cfg *config.ServerConfig, sf sessionFactory, l *slog.Logger) Server {
@@ -28,6 +32,11 @@ func New(cfg *config.ServerConfig, sf sessionFactory, l *slog.Logger) Server {
 		sessionFactory:     sf,
 		connectionLimiter:  make(chan struct{}, cfg.MaxConnections),
 		currentConnections: &sync.WaitGroup{},
+		ipLimiter:          newBucketLimiter(cfg.MaxConnections, cfg.MaxPerIPLimit),
+		handlerConfig: handlerConfig{
+			opTimeout: cfg.OpTimeout,
+			buffSize:  cfg.MaxMessageSize,
+		},
 	}
 }
 
@@ -53,6 +62,12 @@ func (s Server) Run(ctx context.Context) error {
 	return nil
 }
 
+func (s Server) close(c io.Closer) {
+	if err := c.Close(); err != nil {
+		s.log.Error("failed to close connection", "error", err.Error())
+	}
+}
+
 func (s Server) acceptLoop(ctx context.Context, l net.Listener) error {
 	for {
 		select {
@@ -70,38 +85,56 @@ func (s Server) acceptLoop(ctx context.Context, l net.Listener) error {
 			continue
 		}
 
+		remoteIP := parseIP(conn.RemoteAddr().String())
+		if remoteIP == "" {
+			s.log.Debug("drop session due malformed parseIP response", "src", conn.RemoteAddr().String())
+			s.close(conn)
+			continue
+		}
+
+		if !s.ipLimiter.acquire(remoteIP) {
+			s.log.Debug("drop session due the ip limit", "src", conn.RemoteAddr().String())
+			s.close(conn)
+			continue
+		}
+
 		select {
 		case s.connectionLimiter <- struct{}{}:
 			s.currentConnections.Add(1)
 			s.log.Debug("start session", "src", conn.RemoteAddr().String())
+			go s.handleConnection(ctx, conn, s.handlerConfig, remoteIP)
 
 		default:
-			s.log.Debug("drop session due the limit", "src", conn.RemoteAddr().String())
-			if err := conn.Close(); err != nil {
-				s.log.Error("failed to close connection", "error", err.Error())
-			}
+			s.log.Debug("drop session due the connections limit", "src", conn.RemoteAddr().String())
+			s.ipLimiter.release(remoteIP)
+			s.close(conn)
 			continue
 		}
 
-		go func() {
-			defer func() {
-				if err := conn.Close(); err != nil {
-					s.log.Error("failed to close connection", "error", err.Error())
-				}
-			}()
-
-			start := time.Now()
-			cfg := handlerConfig{
-				opTimeout: s.cfg.OpTimeout,
-				buffSize:  s.cfg.MaxMessageSize,
-			}
-
-			newHandler(s.log, s.sessionFactory.NewSessionHandler(), cfg, conn).run(ctx)
-
-			<-s.connectionLimiter
-			s.currentConnections.Done()
-
-			s.log.Debug("session finished", "src", conn.RemoteAddr().String(), "duration", time.Since(start).String())
-		}()
 	}
+}
+
+func (s Server) handleConnection(ctx context.Context, conn connectionSocket, cfg handlerConfig, remoteIP string) {
+	defer func() {
+		s.close(conn)
+		<-s.connectionLimiter
+		s.currentConnections.Done()
+		s.ipLimiter.release(remoteIP)
+	}()
+
+	start := time.Now()
+
+	newHandler(s.log, s.sessionFactory.NewSessionHandler(), cfg, conn).run(ctx)
+
+	s.log.Debug("session finished", "src", conn.RemoteAddr().String(), "duration", time.Since(start).String())
+}
+
+func parseIP(remoteAddr string) string {
+	const portDelimiter = ":"
+	portPosition := strings.LastIndex(remoteAddr, portDelimiter)
+	if portPosition < 0 {
+		return ""
+	}
+
+	return remoteAddr[:portPosition]
 }

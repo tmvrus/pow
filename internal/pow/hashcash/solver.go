@@ -16,7 +16,7 @@ func NewSolver(maxIterations int64) Solver {
 	return Solver{maxIterations: maxIterations}
 }
 
-func (s Solver) Solve(ctx context.Context, bits int32, hashAlg string, resource string) (string, error) {
+func (s Solver) Solve(ctx context.Context, bits int32, hashAlg, resource string) (string, error) {
 	hasher, err := hash.NewHasher(hashAlg)
 	if err != nil {
 		return "", fmt.Errorf("create hasher %q: %w", hashAlg, err)
